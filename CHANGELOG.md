@@ -2,6 +2,15 @@
 
 All notable changes to this plugin are documented here.
 
+## [1.0.1] - 2026-08-10
+### Fixed
+- **Security**: `Trust X-Forwarded-For` was fail-open when `Trusted proxy IPs` was left empty -
+  the header was trusted unconditionally in that case, letting a visitor spoof their IP and
+  bypass the whitelist. Behaviour is now fail-closed: if no trusted proxies are configured,
+  the `X-Forwarded-For` header is ignored entirely and the connecting peer's own IP
+  (`REMOTE_ADDR`) is used, regardless of the `Trust X-Forwarded-For` setting.
+- Updated the `Trusted proxy IPs` field description (en-GB, sk-SK) to reflect the new behaviour.
+
 ## [1.0.0] - 2026-08-10
 ### Added
 - Initial release.

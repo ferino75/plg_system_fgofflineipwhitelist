@@ -75,7 +75,13 @@ final class Fgofflineipwhitelist extends CMSPlugin implements SubscriberInterfac
 
         $trustedProxies = $this->parseList((string) $this->params->get('trusted_proxies', ''));
 
-        if ($trustedProxies !== [] && !$this->ipMatchesList($remoteAddr, $trustedProxies)) {
+        if ($trustedProxies === []) {
+            // Fail closed: with no trusted proxies configured, never trust a
+            // client-suppliable header - it could be spoofed to bypass the whitelist.
+            return $remoteAddr;
+        }
+
+        if (!$this->ipMatchesList($remoteAddr, $trustedProxies)) {
             // Connecting peer is not a known proxy - never trust its XFF header.
             return $remoteAddr;
         }
