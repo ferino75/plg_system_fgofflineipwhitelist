@@ -5,7 +5,7 @@
     <creationDate>2026-08-10</creationDate>
     <copyright>(C) FG</copyright>
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
-    <version>1.0.6</version>
+    <version>1.0.7</version>
     <description>PLG_SYSTEM_FGOFFLINEIPWHITELIST_XML_DESCRIPTION</description>
     <namespace path="src">FG\Plugin\System\Fgofflineipwhitelist</namespace>
 
@@ -59,6 +59,19 @@
                     filter="raw"
                     showon="trust_xff:1"
                 />
+
+                <field
+                    name="ip_header"
+                    type="list"
+                    label="PLG_SYSTEM_FGOFFLINEIPWHITELIST_FIELD_IP_HEADER_LABEL"
+                    description="PLG_SYSTEM_FGOFFLINEIPWHITELIST_FIELD_IP_HEADER_DESC"
+                    default="x_forwarded_for"
+                    showon="trust_xff:1"
+                >
+                    <option value="x_forwarded_for">PLG_SYSTEM_FGOFFLINEIPWHITELIST_FIELD_IP_HEADER_OPT_XFF</option>
+                    <option value="cf_connecting_ip">PLG_SYSTEM_FGOFFLINEIPWHITELIST_FIELD_IP_HEADER_OPT_CF</option>
+                    <option value="true_client_ip">PLG_SYSTEM_FGOFFLINEIPWHITELIST_FIELD_IP_HEADER_OPT_TCI</option>
+                </field>
 
                 <field
                     name="log_access"

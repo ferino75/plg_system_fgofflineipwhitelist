@@ -14,6 +14,7 @@ use Joomla\CMS\Log\Log;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\Event\Event;
 use Joomla\Event\SubscriberInterface;
+use Joomla\Input\Input;
 
 /**
  * System plugin that grants access to a site in "Offline" mode
@@ -63,8 +64,8 @@ final class Fgofflineipwhitelist extends CMSPlugin implements SubscriberInterfac
     }
 
     /**
-     * Resolves the visitor's IP, optionally trusting X-Forwarded-For
-     * when the immediate connecting peer is a configured trusted proxy.
+     * Resolves the visitor's IP, optionally trusting a proxy/CDN-supplied
+     * header when the immediate connecting peer is a configured trusted proxy.
      */
     private function getClientIp(): string
     {
@@ -84,14 +85,38 @@ final class Fgofflineipwhitelist extends CMSPlugin implements SubscriberInterfac
         }
 
         if (!$this->ipMatchesList($remoteAddr, $trustedProxies)) {
-            // Connecting peer is not a known proxy - never trust its XFF header.
+            // Connecting peer is not a known proxy - never trust its headers.
             return $remoteAddr;
         }
 
+        return match ((string) $this->params->get('ip_header', 'x_forwarded_for')) {
+            'cf_connecting_ip' => $this->resolveSingleValueHeader($input, 'HTTP_CF_CONNECTING_IP', $remoteAddr),
+            'true_client_ip'   => $this->resolveSingleValueHeader($input, 'HTTP_TRUE_CLIENT_IP', $remoteAddr),
+            default            => $this->resolveForwardedFor($input, $trustedProxies, $remoteAddr),
+        };
+    }
+
+    /**
+     * Reads a single-value client-IP header (e.g. Cloudflare's CF-Connecting-IP,
+     * or Akamai/Cloudflare Enterprise's True-Client-IP). Unlike X-Forwarded-For,
+     * these are set once by the edge network itself and are not a hop chain.
+     */
+    private function resolveSingleValueHeader(Input $input, string $serverKey, string $fallback): string
+    {
+        $value = trim((string) $input->server->getString($serverKey, ''));
+
+        return $value !== '' ? $value : $fallback;
+    }
+
+    /**
+     * @param array<int, string> $trustedProxies
+     */
+    private function resolveForwardedFor(Input $input, array $trustedProxies, string $fallback): string
+    {
         $forwardedFor = (string) $input->server->getString('HTTP_X_FORWARDED_FOR', '');
 
         if ($forwardedFor === '') {
-            return $remoteAddr;
+            return $fallback;
         }
 
         $chain = array_map('trim', explode(',', $forwardedFor));

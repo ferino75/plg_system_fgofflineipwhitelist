@@ -27,8 +27,10 @@ screen is skipped for you, while every other visitor still sees it.
 
 - Bypasses the Site Offline screen for a configurable list of IP addresses
 - Accepts **exact IPv4/IPv6 addresses** and **CIDR ranges** (e.g. `192.168.1.0/24`, `2001:db8::/32`)
-- Optional, opt-in trust of the `X-Forwarded-For` header for sites behind a reverse proxy
-  or CDN (Cloudflare, nginx, etc.) — gated by a **trusted proxy IP list** so the header can't
+- Optional, opt-in trust of a proxy/CDN-supplied client-IP header for sites behind a
+  reverse proxy or CDN — choose between `X-Forwarded-For` (chain-parsed),
+  `CF-Connecting-IP` (Cloudflare), or `True-Client-IP` (Cloudflare Enterprise / Akamai
+  and some other CDNs) — gated by a **trusted proxy IP list** so the header can't
   be spoofed by a visitor to bypass the whitelist
 - Optional logging of whitelist bypasses to the Joomla log
 - Native Joomla 4/5/6 architecture (PSR-4, `SubscriberInterface`, DI service provider)
@@ -54,7 +56,8 @@ Open the plugin's options and set:
 |---|---|
 | **Allowed IP addresses** | One entry per line (or comma-separated). Exact IPs or CIDR ranges. |
 | **Trust X-Forwarded-For** | Enable only behind a reverse proxy/CDN. |
-| **Trusted proxy IPs** | Required when the above is enabled — IPs allowed to set X-Forwarded-For. |
+| **Trusted proxy IPs** | Required when the above is enabled — IPs allowed to set the client-IP header. |
+| **Client IP header** | Which header to trust: X-Forwarded-For, CF-Connecting-IP, or True-Client-IP. |
 | **Log whitelist bypasses** | Writes matches to the Joomla log for auditing. |
 
 Turn on **Site → Global Configuration → Site Offline**, and any IP in your whitelist will

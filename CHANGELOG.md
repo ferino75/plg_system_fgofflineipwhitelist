@@ -2,6 +2,15 @@
 
 All notable changes to this plugin are documented here.
 
+## [1.0.7] - 2026-08-10
+### Added
+- New **Client IP header** option, selectable when Trust X-Forwarded-For is on:
+  `X-Forwarded-For` (default, chain-parsed as before), `CF-Connecting-IP`
+  (Cloudflare), or `True-Client-IP` (Cloudflare Enterprise / Akamai and some
+  other CDNs). The single-value headers are read directly with no chain
+  parsing needed, and - like X-Forwarded-For - are only ever honoured when the
+  connecting peer matches the configured Trusted proxy IPs.
+
 ## [1.0.6] - 2026-08-10
 ### Changed
 - Removed the `@` error-suppression operator from all `inet_pton()` calls. The
