@@ -5,7 +5,7 @@
     <creationDate>2026-08-10</creationDate>
     <copyright>(C) FG</copyright>
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
-    <version>1.0.7</version>
+    <version>1.0.8</version>
     <description>PLG_SYSTEM_FGOFFLINEIPWHITELIST_XML_DESCRIPTION</description>
     <namespace path="src">FG\Plugin\System\Fgofflineipwhitelist</namespace>
 
@@ -29,6 +29,13 @@
     <config>
         <fields name="params">
             <fieldset name="basic">
+                <field
+                    name="detected_ip"
+                    type="\FG\Plugin\System\Fgofflineipwhitelist\Field\FgclientipField"
+                    label="PLG_SYSTEM_FGOFFLINEIPWHITELIST_FIELD_DETECTED_IP_LABEL"
+                    description="PLG_SYSTEM_FGOFFLINEIPWHITELIST_FIELD_DETECTED_IP_DESC"
+                />
+
                 <field
                     name="allowed_ips"
                     type="textarea"

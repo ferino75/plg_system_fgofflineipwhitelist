@@ -2,6 +2,19 @@
 
 All notable changes to this plugin are documented here.
 
+## [1.0.8] - 2026-08-10
+### Added
+- New **"Your detected IP"** read-only info box at the top of the plugin's settings,
+  showing the IP currently detected for the admin's own request - resolved with the
+  exact same shared logic (`Support\IpResolver`) the plugin uses at runtime, including
+  any unsaved Trust X-Forwarded-For / Trusted proxy IPs / Client IP header values on
+  the form. Makes it easy to find the right value to add to Allowed IP addresses
+  without leaving the settings screen.
+### Changed
+- Refactored IP/CIDR matching and client-IP header resolution out of the plugin class
+  into a shared `Support\IpResolver` helper, used by both the runtime plugin and the
+  new preview field, so the preview can never diverge from actual enforcement.
+
 ## [1.0.7] - 2026-08-10
 ### Added
 - New **Client IP header** option, selectable when Trust X-Forwarded-For is on:

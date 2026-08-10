@@ -32,6 +32,8 @@ screen is skipped for you, while every other visitor still sees it.
   `CF-Connecting-IP` (Cloudflare), or `True-Client-IP` (Cloudflare Enterprise / Akamai
   and some other CDNs) — gated by a **trusted proxy IP list** so the header can't
   be spoofed by a visitor to bypass the whitelist
+- Shows your own currently-detected IP right in the plugin's settings screen, so you
+  know exactly what to add to the whitelist
 - Optional logging of whitelist bypasses to the Joomla log
 - Native Joomla 4/5/6 architecture (PSR-4, `SubscriberInterface`, DI service provider)
 - English (en-GB) and Slovak (sk-SK) language files

@@ -10,11 +10,11 @@ namespace FG\Plugin\System\Fgofflineipwhitelist\Extension;
 
 defined('_JEXEC') or die;
 
+use FG\Plugin\System\Fgofflineipwhitelist\Support\IpResolver;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\Event\Event;
 use Joomla\Event\SubscriberInterface;
-use Joomla\Input\Input;
 
 /**
  * System plugin that grants access to a site in "Offline" mode
@@ -76,7 +76,7 @@ final class Fgofflineipwhitelist extends CMSPlugin implements SubscriberInterfac
             return $remoteAddr;
         }
 
-        $trustedProxies = $this->parseList((string) $this->params->get('trusted_proxies', ''));
+        $trustedProxies = IpResolver::parseList((string) $this->params->get('trusted_proxies', ''));
 
         if ($trustedProxies === []) {
             // Fail closed: with no trusted proxies configured, never trust a
@@ -84,57 +84,14 @@ final class Fgofflineipwhitelist extends CMSPlugin implements SubscriberInterfac
             return $remoteAddr;
         }
 
-        if (!$this->ipMatchesList($remoteAddr, $trustedProxies)) {
+        if (!IpResolver::ipMatchesList($remoteAddr, $trustedProxies)) {
             // Connecting peer is not a known proxy - never trust its headers.
             return $remoteAddr;
         }
 
-        return match ((string) $this->params->get('ip_header', 'x_forwarded_for')) {
-            'cf_connecting_ip' => $this->resolveSingleValueHeader($input, 'HTTP_CF_CONNECTING_IP', $remoteAddr),
-            'true_client_ip'   => $this->resolveSingleValueHeader($input, 'HTTP_TRUE_CLIENT_IP', $remoteAddr),
-            default            => $this->resolveForwardedFor($input, $trustedProxies, $remoteAddr),
-        };
-    }
+        $ipHeader = (string) $this->params->get('ip_header', 'x_forwarded_for');
 
-    /**
-     * Reads a single-value client-IP header (e.g. Cloudflare's CF-Connecting-IP,
-     * or Akamai/Cloudflare Enterprise's True-Client-IP). Unlike X-Forwarded-For,
-     * these are set once by the edge network itself and are not a hop chain.
-     */
-    private function resolveSingleValueHeader(Input $input, string $serverKey, string $fallback): string
-    {
-        $value = trim((string) $input->server->getString($serverKey, ''));
-
-        return $value !== '' ? $value : $fallback;
-    }
-
-    /**
-     * @param array<int, string> $trustedProxies
-     */
-    private function resolveForwardedFor(Input $input, array $trustedProxies, string $fallback): string
-    {
-        $forwardedFor = (string) $input->server->getString('HTTP_X_FORWARDED_FOR', '');
-
-        if ($forwardedFor === '') {
-            return $fallback;
-        }
-
-        $chain = array_map('trim', explode(',', $forwardedFor));
-
-        // Walk the chain right-to-left. Each entry's IP is only trustworthy if the
-        // hop that relayed it (the entry to its right, or REMOTE_ADDR for the
-        // rightmost entry) is itself a known trusted proxy - otherwise a spoofed
-        // leading entry from the real client would be taken at face value. Return
-        // the first (rightmost) entry that is not itself a trusted proxy.
-        for ($i = count($chain) - 1; $i >= 0; $i--) {
-            if (!$this->ipMatchesList($chain[$i], $trustedProxies)) {
-                return $chain[$i];
-            }
-        }
-
-        // Every entry in the chain is itself a trusted proxy (unusual) - fall back
-        // to the left-most (originating) entry.
-        return $chain[0];
+        return IpResolver::resolveHeader($input, $ipHeader, $trustedProxies, $remoteAddr);
     }
 
     /**
@@ -142,86 +99,6 @@ final class Fgofflineipwhitelist extends CMSPlugin implements SubscriberInterfac
      */
     private function isAllowed(string $ip): bool
     {
-        return $this->ipMatchesList($ip, $this->parseList((string) $this->params->get('allowed_ips', '')));
-    }
-
-    /**
-     * @param array<int, string> $list
-     */
-    private function ipMatchesList(string $ip, array $list): bool
-    {
-        foreach ($list as $entry) {
-            if ($this->ipMatchesEntry($ip, $entry)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Matches a single IP against a single entry, which may be an exact
-     * IPv4/IPv6 address or a CIDR range (e.g. 192.168.1.0/24, 2001:db8::/32).
-     */
-    private function ipMatchesEntry(string $ip, string $entry): bool
-    {
-        if (!str_contains($entry, '/')) {
-            // Compare binary form, not text: IPv6 has multiple valid notations for
-            // the same address (e.g. "2001:db8::1" vs the fully expanded form),
-            // which a plain string comparison would treat as different addresses.
-            $entryBin = inet_pton($entry);
-            $ipBin    = inet_pton($ip);
-
-            if ($entryBin === false || $ipBin === false) {
-                return false;
-            }
-
-            return hash_equals($entryBin, $ipBin);
-        }
-
-        [$subnet, $maskBits] = explode('/', $entry, 2);
-
-        $ipBin     = inet_pton($ip);
-        $subnetBin = inet_pton($subnet);
-
-        if ($ipBin === false || $subnetBin === false || strlen($ipBin) !== strlen($subnetBin)) {
-            return false;
-        }
-
-        $maskBits  = (int) $maskBits;
-        $totalBits = strlen($ipBin) * 8;
-
-        if ($maskBits < 0 || $maskBits > $totalBits) {
-            return false;
-        }
-
-        $fullBytes    = intdiv($maskBits, 8);
-        $remainderBit = $maskBits % 8;
-
-        if ($fullBytes > 0 && substr($ipBin, 0, $fullBytes) !== substr($subnetBin, 0, $fullBytes)) {
-            return false;
-        }
-
-        if ($remainderBit === 0) {
-            return true;
-        }
-
-        $mask = chr((0xFF << (8 - $remainderBit)) & 0xFF);
-
-        return (substr($ipBin, $fullBytes, 1) & $mask) === (substr($subnetBin, $fullBytes, 1) & $mask);
-    }
-
-    /**
-     * Splits the textarea param into a clean list of entries, accepting
-     * both newline- and comma-separated input.
-     *
-     * @return array<int, string>
-     */
-    private function parseList(string $raw): array
-    {
-        $normalised = str_replace(["\r\n", "\r"], "\n", $raw);
-        $pieces     = preg_split('/[\n,]+/', $normalised) ?: [];
-
-        return array_values(array_filter(array_map('trim', $pieces), static fn ($v) => $v !== ''));
+        return IpResolver::ipMatchesList($ip, IpResolver::parseList((string) $this->params->get('allowed_ips', '')));
     }
 }
