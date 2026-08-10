@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @package     FG.Plugin.System.Fgofflineipwhitelist
  * @copyright   Copyright (C) FG. All rights reserved.

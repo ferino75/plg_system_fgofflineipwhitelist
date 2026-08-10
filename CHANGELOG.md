@@ -2,6 +2,24 @@
 
 All notable changes to this plugin are documented here.
 
+## [1.1.3] - 2026-08-10
+### Changed
+- Added `declare(strict_types=1);` to all four PHP files (`Extension\Fgofflineipwhitelist`,
+  `Support\IpResolver`, `fields/fgclientip.php`, `services/provider.php`), the current
+  standard for Joomla 5/6 development. All existing type conversions in the codebase
+  already used explicit casts, so this catches accidental implicit coercions going
+  forward without changing current behaviour - verified with `php -l` on all four
+  files and a functional re-run of the IPv4-mapped-IPv6 test suite against the
+  actual (now strict) `IpResolver.php`.
+
+## [1.1.2] - 2026-08-10
+### Changed
+- `onAfterInitialise()` now type-hints its parameter against `Joomla\Event\EventInterface`
+  instead of the concrete `Joomla\Event\Event` class, for better compatibility with
+  Joomla's DI container and event system (the parameter itself isn't used in the
+  method body, so this is a pure type-safety/API-cleanliness change with no
+  behavioural effect).
+
 ## [1.1.1] - 2026-08-10
 ### Fixed
 - `onAfterInitialise` is now registered with `Joomla\Event\Priority::HIGH` instead

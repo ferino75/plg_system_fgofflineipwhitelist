@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @package     FG.Plugin.System.Fgofflineipwhitelist
  * @copyright   Copyright (C) FG. All rights reserved.
@@ -13,7 +15,7 @@ defined('_JEXEC') or die;
 use FG\Plugin\System\Fgofflineipwhitelist\Support\IpResolver;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Plugin\CMSPlugin;
-use Joomla\Event\Event;
+use Joomla\Event\EventInterface;
 use Joomla\Event\Priority;
 use Joomla\Event\SubscriberInterface;
 
@@ -43,7 +45,7 @@ final class Fgofflineipwhitelist extends CMSPlugin implements SubscriberInterfac
      * Checked before Joomla dispatches to the offline template, so the
      * offline flag can be temporarily cleared for whitelisted visitors.
      */
-    public function onAfterInitialise(Event $event): void
+    public function onAfterInitialise(EventInterface $event): void
     {
         $app = $this->getApplication();
 
