@@ -2,6 +2,13 @@
 
 All notable changes to this plugin are documented here.
 
+## [1.0.5] - 2026-08-10
+### Changed
+- When access logging is enabled and a whitelisted visitor is resolved through
+  `X-Forwarded-For`, the log entry now also records the connecting proxy's own
+  address (`Offline mode bypassed for whitelisted IP X via proxy Y`), instead of
+  only the resolved client IP. Direct (non-proxied) matches are unchanged.
+
 ## [1.0.4] - 2026-08-10
 ### Fixed
 - Exact-match IP comparison (non-CIDR entries) compared raw text, so two valid but

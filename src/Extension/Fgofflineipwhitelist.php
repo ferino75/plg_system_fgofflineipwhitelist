@@ -52,11 +52,13 @@ final class Fgofflineipwhitelist extends CMSPlugin implements SubscriberInterfac
         $app->set('offline', false);
 
         if ((bool) $this->params->get('log_access', 0)) {
-            Log::add(
-                sprintf('Offline mode bypassed for whitelisted IP %s', $clientIp),
-                Log::INFO,
-                'fgofflineipwhitelist'
-            );
+            $remoteAddr = trim((string) $this->getApplication()->input->server->getString('REMOTE_ADDR', ''));
+
+            $message = $clientIp === $remoteAddr
+                ? sprintf('Offline mode bypassed for whitelisted IP %s', $clientIp)
+                : sprintf('Offline mode bypassed for whitelisted IP %s via proxy %s', $clientIp, $remoteAddr);
+
+            Log::add($message, Log::INFO, 'fgofflineipwhitelist');
         }
     }
 
