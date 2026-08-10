@@ -144,8 +144,8 @@ final class Fgofflineipwhitelist extends CMSPlugin implements SubscriberInterfac
             // Compare binary form, not text: IPv6 has multiple valid notations for
             // the same address (e.g. "2001:db8::1" vs the fully expanded form),
             // which a plain string comparison would treat as different addresses.
-            $entryBin = @inet_pton($entry);
-            $ipBin    = @inet_pton($ip);
+            $entryBin = inet_pton($entry);
+            $ipBin    = inet_pton($ip);
 
             if ($entryBin === false || $ipBin === false) {
                 return false;
@@ -156,8 +156,8 @@ final class Fgofflineipwhitelist extends CMSPlugin implements SubscriberInterfac
 
         [$subnet, $maskBits] = explode('/', $entry, 2);
 
-        $ipBin     = @inet_pton($ip);
-        $subnetBin = @inet_pton($subnet);
+        $ipBin     = inet_pton($ip);
+        $subnetBin = inet_pton($subnet);
 
         if ($ipBin === false || $subnetBin === false || strlen($ipBin) !== strlen($subnetBin)) {
             return false;

@@ -2,6 +2,13 @@
 
 All notable changes to this plugin are documented here.
 
+## [1.0.6] - 2026-08-10
+### Changed
+- Removed the `@` error-suppression operator from all `inet_pton()` calls. The
+  `false` return value was already being checked explicitly right after each
+  call, so the suppression added no benefit and only hid legitimate warnings
+  for malformed configuration entries.
+
 ## [1.0.5] - 2026-08-10
 ### Changed
 - When access logging is enabled and a whitelisted visitor is resolved through
