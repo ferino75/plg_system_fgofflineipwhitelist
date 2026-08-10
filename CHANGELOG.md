@@ -2,6 +2,13 @@
 
 All notable changes to this plugin are documented here.
 
+## [1.1.0] - 2026-08-10
+### Added
+- Declared `<php_minimum>8.0.0</php_minimum>` in the manifest. The code relies on
+  `match` expressions and `str_contains()` (both PHP 8.0+), so Joomla's installer
+  now blocks/warns on installation to an incompatible PHP version up front,
+  instead of failing with a fatal error the first time the plugin runs.
+
 ## [1.0.10] - 2026-08-10
 ### Fixed
 - IPv4-mapped IPv6 addresses (`::ffff:192.0.2.1`, common for dual-stack visitors

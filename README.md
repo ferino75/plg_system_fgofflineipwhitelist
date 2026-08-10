@@ -42,7 +42,8 @@ screen is skipped for you, while every other visitor still sees it.
 ## Requirements
 
 - Joomla 4, 5, or 6
-- PHP 7.4+ (matching your Joomla version's own requirement)
+- PHP 8.0+ (enforced by the manifest's `php_minimum` on install; matches or exceeds
+  what Joomla 4/5/6 already require)
 
 ## Installation
 
