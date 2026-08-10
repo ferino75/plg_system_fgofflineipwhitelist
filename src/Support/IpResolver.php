@@ -65,19 +65,40 @@ final class IpResolver
                 return false;
             }
 
+            // Normalize IPv4-mapped IPv6 ("::ffff:192.0.2.1") to plain IPv4 on
+            // both sides independently, so it compares equal to the same
+            // address written as plain IPv4 - common for dual-stack visitors.
+            [$entryBin] = self::normalizeMappedIpv4($entryBin);
+            [$ipBin]    = self::normalizeMappedIpv4($ipBin);
+
             return hash_equals($entryBin, $ipBin);
         }
 
         [$subnet, $maskBits] = explode('/', $entry, 2);
+        $maskBits             = (int) $maskBits;
 
         $ipBin     = inet_pton($ip);
         $subnetBin = inet_pton($subnet);
 
-        if ($ipBin === false || $subnetBin === false || strlen($ipBin) !== strlen($subnetBin)) {
+        if ($ipBin === false || $subnetBin === false) {
             return false;
         }
 
-        $maskBits  = (int) $maskBits;
+        // As above: normalize either side's IPv4-mapped IPv6 form to plain
+        // IPv4. If the *subnet* entry itself was written in mapped form, its
+        // mask was expressed against the 128-bit address, so scale it down
+        // to the 32-bit equivalent to match the now-4-byte representation.
+        [$ipBin]                    = self::normalizeMappedIpv4($ipBin);
+        [$subnetBin, $subnetMapped] = self::normalizeMappedIpv4($subnetBin);
+
+        if ($subnetMapped) {
+            $maskBits = max(0, $maskBits - 96);
+        }
+
+        if (strlen($ipBin) !== strlen($subnetBin)) {
+            return false;
+        }
+
         $totalBits = strlen($ipBin) * 8;
 
         if ($maskBits < 0 || $maskBits > $totalBits) {
@@ -98,6 +119,25 @@ final class IpResolver
         $mask = chr((0xFF << (8 - $remainderBit)) & 0xFF);
 
         return (substr($ipBin, $fullBytes, 1) & $mask) === (substr($subnetBin, $fullBytes, 1) & $mask);
+    }
+
+    /**
+     * If $binary is a 16-byte IPv4-mapped IPv6 address (the ::ffff:0:0/96
+     * range - i.e. 10 zero bytes, then 0xff 0xff, then a 4-byte IPv4
+     * address), returns its plain 4-byte IPv4 form. Otherwise returns the
+     * input unchanged. The second tuple element reports whether a mapped
+     * address was actually found, so callers with an associated CIDR mask
+     * (expressed against the original 128-bit form) can rescale it.
+     *
+     * @return array{0: string, 1: bool}
+     */
+    private static function normalizeMappedIpv4(string $binary): array
+    {
+        if (strlen($binary) === 16 && substr($binary, 0, 12) === "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xff\xff") {
+            return [substr($binary, 12, 4), true];
+        }
+
+        return [$binary, false];
     }
 
     /**

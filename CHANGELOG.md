@@ -2,6 +2,16 @@
 
 All notable changes to this plugin are documented here.
 
+## [1.0.10] - 2026-08-10
+### Fixed
+- IPv4-mapped IPv6 addresses (`::ffff:192.0.2.1`, common for dual-stack visitors
+  or IPv4-only backends seen through an IPv6-capable proxy) did not match the
+  same address written as plain IPv4, for both exact entries and CIDR ranges.
+  Both sides are now normalized to plain IPv4 independently before comparing;
+  when a CIDR *entry* itself was written in mapped form, its mask is rescaled
+  from the 128-bit to the 32-bit equivalent accordingly. Plain IPv4-vs-IPv4 and
+  plain IPv6-vs-IPv6 matching is unaffected.
+
 ## [1.0.9] - 2026-08-10
 ### Fixed
 - The "Your detected IP" field added in 1.0.8 rendered as an empty, editable text
