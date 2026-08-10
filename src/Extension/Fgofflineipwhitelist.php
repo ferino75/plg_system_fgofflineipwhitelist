@@ -139,7 +139,17 @@ final class Fgofflineipwhitelist extends CMSPlugin implements SubscriberInterfac
     private function ipMatchesEntry(string $ip, string $entry): bool
     {
         if (!str_contains($entry, '/')) {
-            return hash_equals($entry, $ip);
+            // Compare binary form, not text: IPv6 has multiple valid notations for
+            // the same address (e.g. "2001:db8::1" vs the fully expanded form),
+            // which a plain string comparison would treat as different addresses.
+            $entryBin = @inet_pton($entry);
+            $ipBin    = @inet_pton($ip);
+
+            if ($entryBin === false || $ipBin === false) {
+                return false;
+            }
+
+            return hash_equals($entryBin, $ipBin);
         }
 
         [$subnet, $maskBits] = explode('/', $entry, 2);

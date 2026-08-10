@@ -2,6 +2,14 @@
 
 All notable changes to this plugin are documented here.
 
+## [1.0.4] - 2026-08-10
+### Fixed
+- Exact-match IP comparison (non-CIDR entries) compared raw text, so two valid but
+  differently-written notations of the same IPv6 address (e.g. `2001:db8::1` vs its
+  fully expanded form) were treated as different addresses and would not match.
+  Both sides are now normalized to binary via `inet_pton()` before comparing,
+  matching the approach already used for CIDR ranges.
+
 ## [1.0.3] - 2026-08-10
 ### Fixed
 - **Security**: `X-Forwarded-For` parsing used the left-most (client-supplied) entry
