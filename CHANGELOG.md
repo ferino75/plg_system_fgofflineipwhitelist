@@ -2,6 +2,16 @@
 
 All notable changes to this plugin are documented here.
 
+## [1.0.3] - 2026-08-10
+### Fixed
+- **Security**: `X-Forwarded-For` parsing used the left-most (client-supplied) entry
+  in the chain, which a real client could freely spoof if a trusted proxy only
+  appends its own hop instead of overwriting the header. Parsing now walks the
+  chain right-to-left, validating each hop against the trusted proxy list, and
+  returns the first entry that is not itself a trusted proxy - the same model
+  used by e.g. `TRUSTED_PROXIES`-style handling in mainstream reverse-proxy setups.
+- Updated the `Trusted proxy IPs` field description (en-GB, sk-SK) accordingly.
+
 ## [1.0.2] - 2026-08-10
 ### Fixed
 - Manifest was missing the `<updateservers>` block, so Joomla had no way to discover

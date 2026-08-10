@@ -92,10 +92,22 @@ final class Fgofflineipwhitelist extends CMSPlugin implements SubscriberInterfac
             return $remoteAddr;
         }
 
-        // Left-most entry is the original client in a standard XFF chain.
-        $parts = explode(',', $forwardedFor);
+        $chain = array_map('trim', explode(',', $forwardedFor));
 
-        return trim($parts[0]);
+        // Walk the chain right-to-left. Each entry's IP is only trustworthy if the
+        // hop that relayed it (the entry to its right, or REMOTE_ADDR for the
+        // rightmost entry) is itself a known trusted proxy - otherwise a spoofed
+        // leading entry from the real client would be taken at face value. Return
+        // the first (rightmost) entry that is not itself a trusted proxy.
+        for ($i = count($chain) - 1; $i >= 0; $i--) {
+            if (!$this->ipMatchesList($chain[$i], $trustedProxies)) {
+                return $chain[$i];
+            }
+        }
+
+        // Every entry in the chain is itself a trusted proxy (unusual) - fall back
+        // to the left-most (originating) entry.
+        return $chain[0];
     }
 
     /**
