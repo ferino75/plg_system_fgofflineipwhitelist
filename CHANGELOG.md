@@ -2,6 +2,18 @@
 
 All notable changes to this plugin are documented here.
 
+## [1.0.9] - 2026-08-10
+### Fixed
+- The "Your detected IP" field added in 1.0.8 rendered as an empty, editable text
+  box instead of the read-only info panel. Root cause: the manifest declared the
+  custom field via `type="\Fully\Qualified\Class"`, a syntax not reliably supported
+  on extension config screens across Joomla 4/5/6 - the field type failed to
+  resolve and Joomla silently fell back to a plain text input. Replaced with the
+  classic `addfieldpath` + global `JFormField<Type>` class convention (field now
+  lives in `fields/fgclientip.php` instead of `src/Field/`), which is the
+  well-established, reliably-supported mechanism for this. Behaviour and output
+  are otherwise unchanged.
+
 ## [1.0.8] - 2026-08-10
 ### Added
 - New **"Your detected IP"** read-only info box at the top of the plugin's settings,
