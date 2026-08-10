@@ -1,0 +1,15 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.sublime-*
+
+# Build artifacts
+/dist/
+*.zip
+
+# Logs
+*.log

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="plugin" group="system" method="upgrade">
+    <name>PLG_SYSTEM_FGOFFLINEIPWHITELIST</name>
+    <author>FG</author>
+    <creationDate>2026-08-10</creationDate>
+    <copyright>(C) FG</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <version>1.0.0</version>
+    <description>PLG_SYSTEM_FGOFFLINEIPWHITELIST_XML_DESCRIPTION</description>
+    <namespace path="src">FG\Plugin\System\Fgofflineipwhitelist</namespace>
+
+    <files>
+        <folder plugin="fgofflineipwhitelist">services</folder>
+        <folder>src</folder>
+        <folder>language</folder>
+    </files>
+
+    <languages>
+        <language tag="en-GB">language/en-GB/plg_system_fgofflineipwhitelist.ini</language>
+        <language tag="en-GB">language/en-GB/plg_system_fgofflineipwhitelist.sys.ini</language>
+        <language tag="sk-SK">language/sk-SK/plg_system_fgofflineipwhitelist.ini</language>
+        <language tag="sk-SK">language/sk-SK/plg_system_fgofflineipwhitelist.sys.ini</language>
+    </languages>
+
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field
+                    name="allowed_ips"
+                    type="textarea"
+                    label="PLG_SYSTEM_FGOFFLINEIPWHITELIST_FIELD_ALLOWED_IPS_LABEL"
+                    description="PLG_SYSTEM_FGOFFLINEIPWHITELIST_FIELD_ALLOWED_IPS_DESC"
+                    rows="6"
+                    filter="raw"
+                />
+
+                <field
+                    name="trust_xff"
+                    type="radio"
+                    layout="joomla.form.field.radio.switcher"
+                    label="PLG_SYSTEM_FGOFFLINEIPWHITELIST_FIELD_TRUST_XFF_LABEL"
+                    description="PLG_SYSTEM_FGOFFLINEIPWHITELIST_FIELD_TRUST_XFF_DESC"
+                    default="0"
+                >
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+
+                <field
+                    name="trusted_proxies"
+                    type="textarea"
+                    label="PLG_SYSTEM_FGOFFLINEIPWHITELIST_FIELD_TRUSTED_PROXIES_LABEL"
+                    description="PLG_SYSTEM_FGOFFLINEIPWHITELIST_FIELD_TRUSTED_PROXIES_DESC"
+                    rows="4"
+                    filter="raw"
+                    showon="trust_xff:1"
+                />
+
+                <field
+                    name="log_access"
+                    type="radio"
+                    layout="joomla.form.field.radio.switcher"
+                    label="PLG_SYSTEM_FGOFFLINEIPWHITELIST_FIELD_LOG_ACCESS_LABEL"
+                    description="PLG_SYSTEM_FGOFFLINEIPWHITELIST_FIELD_LOG_ACCESS_DESC"
+                    default="0"
+                >
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+            </fieldset>
+        </fields>
+    </config>
+</extension>
