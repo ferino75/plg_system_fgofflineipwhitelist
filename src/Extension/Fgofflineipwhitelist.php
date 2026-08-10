@@ -14,6 +14,7 @@ use FG\Plugin\System\Fgofflineipwhitelist\Support\IpResolver;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\Event\Event;
+use Joomla\Event\Priority;
 use Joomla\Event\SubscriberInterface;
 
 /**
@@ -23,12 +24,18 @@ use Joomla\Event\SubscriberInterface;
 final class Fgofflineipwhitelist extends CMSPlugin implements SubscriberInterface
 {
     /**
-     * @return array<string, string>
+     * @return array<string, array{0: string, 1: int}>
      */
     public static function getSubscribedEvents(): array
     {
+        // High priority so this runs before other onAfterInitialise listeners -
+        // notably the System - Cache plugin, which could otherwise serve a
+        // cached "Offline" page response before this plugin gets a chance to
+        // clear the offline flag for a whitelisted visitor. In Joomla's event
+        // system, a HIGHER priority value runs EARLIER (opposite of e.g.
+        // WordPress hook priorities).
         return [
-            'onAfterInitialise' => 'onAfterInitialise',
+            'onAfterInitialise' => ['onAfterInitialise', Priority::HIGH],
         ];
     }
 

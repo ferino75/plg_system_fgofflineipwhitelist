@@ -2,6 +2,16 @@
 
 All notable changes to this plugin are documented here.
 
+## [1.1.1] - 2026-08-10
+### Fixed
+- `onAfterInitialise` is now registered with `Joomla\Event\Priority::HIGH` instead
+  of the default priority, so it runs before other listeners on the same event -
+  notably the System - Cache plugin, which could otherwise serve a cached
+  "Offline" page response before this plugin had a chance to clear the offline
+  flag for a whitelisted visitor. (Note: in Joomla's event system a *higher*
+  priority value runs *earlier* - the opposite convention from some other
+  plugin systems.)
+
 ## [1.1.0] - 2026-08-10
 ### Added
 - Declared `<php_minimum>8.0.0</php_minimum>` in the manifest. The code relies on
