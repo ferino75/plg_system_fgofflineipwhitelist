@@ -5,9 +5,13 @@
     <creationDate>2026-08-10</creationDate>
     <copyright>(C) FG</copyright>
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <description>PLG_SYSTEM_FGOFFLINEIPWHITELIST_XML_DESCRIPTION</description>
     <namespace path="src">FG\Plugin\System\Fgofflineipwhitelist</namespace>
+
+    <updateservers>
+        <server type="extension" priority="1" name="System - FG Offline IP Whitelist Update Site">https://raw.githubusercontent.com/ferino75/plg_system_fgofflineipwhitelist/master/updates.xml</server>
+    </updateservers>
 
     <files>
         <folder plugin="fgofflineipwhitelist">services</folder>

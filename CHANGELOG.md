@@ -2,6 +2,12 @@
 
 All notable changes to this plugin are documented here.
 
+## [1.0.2] - 2026-08-10
+### Fixed
+- Manifest was missing the `<updateservers>` block, so Joomla had no way to discover
+  `updates.xml` and never checked for new versions. Added an extension update server
+  pointing at the raw `updates.xml` on the `master` branch.
+
 ## [1.0.1] - 2026-08-10
 ### Fixed
 - **Security**: `Trust X-Forwarded-For` was fail-open when `Trusted proxy IPs` was left empty -
