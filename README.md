@@ -2,7 +2,7 @@
   <img src="assets/logo.png" width="120" alt="plg_system_fgofflineipwhitelist logo">
 </p>
 
-<h1 align="center">System - FG Offline IP Whitelist</h1>
+<h1 align="center">FG Offline IP Whitelist plugin for Joomla</h1>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Joomla-4%20%7C%205%20%7C%206-1A6877?logo=joomla&logoColor=white" alt="Joomla 4 | 5 | 6">
