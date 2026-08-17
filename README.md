@@ -5,10 +5,10 @@
 <h1 align="center">FG Offline IP Whitelist plugin for Joomla</h1>
 
 <p align="center">
+  <img src="https://img.shields.io/github/v/release/ferino75/plg_system_fgofflineipwhitelist?color=FF6B4A&label=release" alt="Latest release">
   <img src="https://img.shields.io/badge/Joomla-4%20%7C%205%20%7C%206-1A6877?logo=joomla&logoColor=white" alt="Joomla 4 | 5 | 6">
   <img src="https://img.shields.io/badge/PHP-8.0%2B-green" alt="PHP 8.0+">
   <img src="https://img.shields.io/badge/license-GPL--2.0-105060" alt="License: GPL-2.0">
-  <img src="https://img.shields.io/github/v/release/ferino75/plg_system_fgofflineipwhitelist?color=FF6B4A&label=release" alt="Latest release">
   <img src="https://img.shields.io/github/downloads/ferino75/plg_system_fgofflineipwhitelist/total?color=FF6B4A" alt="Downloads">
 </p>
 
