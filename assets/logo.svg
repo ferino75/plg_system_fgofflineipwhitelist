@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="markBlue" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#081C30"/>
+      <stop offset="1" stop-color="#123A5C"/>
+    </linearGradient>
+    <filter id="markBlur" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="26"/>
+    </filter>
+  </defs>
+  <g filter="url(#markBlur)" opacity="0.4">
+    <rect x="0" y="14" width="512" height="512" rx="96" ry="96" fill="#000000"/>
+  </g>
+  
+  <g>
+    <rect x="10" y="10" width="492" height="492" rx="96" ry="96" fill="url(#markBlue)"/>
+    
+  <path d="M 196 268
+           L 196 190
+           C 196 138, 238 96, 296 96
+           C 348 96, 388 132, 394 178"
+        fill="none" stroke="#FFFFFF" stroke-width="38"
+        stroke-linecap="round" stroke-linejoin="round"/>
+
+    <rect x="146" y="268" width="220" height="176" rx="30" ry="30" fill="#FFFFFF"/>
+    <circle cx="256" cy="330" r="20" fill="#FF6B4A"/><rect x="246" y="340" width="20" height="40" rx="8" ry="8" fill="#FF6B4A"/>
+  </g>
+
+</svg>
